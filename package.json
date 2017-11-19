@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "supervisor -x micro-bot index.js",
-    "start": "micro-bot -d ${NOW_URL}",
+    "start": "micro-bot -e .env/TOKEN.env",
     "lint": "eslint .",
     "test": "npm run lint"
   },
