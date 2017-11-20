@@ -8,8 +8,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "dev": "supervisor -x micro-bot index.js",
-    "start": "micro-bot -e .env/TOKEN.env",
+    "dev": "supervisor -i node_modules -p 2500 -x micro-bot -- index.js -e .env/TOKEN.env",
+    "start": "micro-bot -e .env/TOKEN.env index.js",
     "lint": "eslint .",
     "test": "npm run lint"
   },
@@ -32,6 +32,7 @@
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.0.0",
     "eslint-plugin-standard": "^3.0.1",
+    "nodemon": "^1.12.1",
     "supervisor": "^0.12.0"
   }
 }
