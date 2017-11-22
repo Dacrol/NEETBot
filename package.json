@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "description": "A neat Telegram bot",
   "repository": {
-    "url": "Dacrol/NEETBot",
+    "url": "https://github.com/Dacrol/NEETBot",
     "type": "git"
   },
   "main": "index.js",
   "scripts": {
-    "dev": "supervisor -i node_modules -p 2500 -x micro-bot -- index.js -e .env/TOKEN.env",
+    "dev": "nodemon --config nodemon.json --exec \"yarn micro-bot -e .env/TOKEN.env index.js\"",
     "start": "micro-bot -e .env/TOKEN.env index.js",
     "lint": "eslint .",
     "test": "npm run lint"
@@ -32,7 +32,6 @@
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.0.0",
     "eslint-plugin-standard": "^3.0.1",
-    "nodemon": "^1.12.1",
-    "supervisor": "^0.12.0"
+    "nodemon": "^1.12.1"
   }
 }
