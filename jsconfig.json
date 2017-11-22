@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "module": "commonjs",
+        "baseUrl": ".",
+        "paths": {
+          "telegraf/*": ["./node_modules/telegraf/*"]
+        },
+        "maxNodeModuleJsDepth": 4,
+        "checkJs": true
+    },
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*"
+    ]
+}
