@@ -23,13 +23,6 @@ const stage = new Stage([searchScene], {
   ttl: 15
 })
 
-const keyboard = Markup.inlineKeyboard([
-  Markup.callbackButton('Subscribe', 'subscribe'),
-  Markup.callbackButton('Close', 'close')
-])
-  .oneTime()
-  .resize()
-
 // Setup bot
 module.exports = bot
 // Echo requests to console
@@ -44,8 +37,10 @@ bot.command('myshows', ({ reply }) => {
 })
 bot.command('search', enter('search'))
 
-// Actions (callbacks from buttons etc)
-bot.action('subscribe', ({ subscribe }) => subscribeToShow())
+// Actions aka keyboard callbacks
+bot.action('subscribe', (ctx, next) => {
+  return ctx.reply('Subscribed 👍')
+})
 
 // When receiving any message which is not a command
 bot.on('message', ctx => showStartMenu(ctx))
@@ -75,10 +70,10 @@ async function seriesSearch (ctx, name) {
   if (json.total_results === 0) {
     ctx.reply('No hits. Sorry!')
   } else {
-    ctx.reply(json.results[0].name, Extra.markup(keyboard))
+    ctx.reply(`${json.results[0].name} \n
+${json.results[0].overview}\n`, Extra.markup(Markup.inlineKeyboard([
+      Markup.callbackButton('Subscribe', 'subscribe')
+    ])
+    ))
   }
-}
-
-async function subscribeToShow (ctx, name) {
-  ctx.reply('Subscribed to show.')
 }
