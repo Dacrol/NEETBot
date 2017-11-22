@@ -22,7 +22,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "micro-bot": "^2.0.0"
+    "micro-bot": "^2.0.0",
+    "node-fetch": "^1.7.3"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
