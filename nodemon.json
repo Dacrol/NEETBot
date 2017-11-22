@@ -9,6 +9,7 @@
   },
   "verbose": false,
   "ext": "js json",
-  "delay": "1000",
+  "delay": "5000",
+  "runOnChangeOnly": true,
   "exitcrash": false
 }
