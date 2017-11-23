@@ -4,12 +4,12 @@
     ".git",
      "node_modules/**/node_modules"
     ],
-  "execMap": {
-    "js": "npm start"
-  },
-  "verbose": false,
+  "watch": [
+    "index.js"
+  ],
+  "verbose": true,
   "ext": "js json",
-  "delay": "5000",
-  "runOnChangeOnly": true,
+  "delay": "500",
+  "runOnChangeOnly": false,
   "exitcrash": false
 }

@@ -8,7 +8,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --config nodemon.json --exec \"yarn micro-bot -e .env/TOKEN.env index.js\"",
+    "dev": "nodemon --config nodemon.json --exec \"sleep 2 && yarn start\"",
     "start": "micro-bot -e .env/TOKEN.env index.js",
     "lint": "eslint .",
     "test": "npm run lint"
