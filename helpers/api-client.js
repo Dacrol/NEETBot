@@ -49,15 +49,14 @@ class ApiClient {
       null
     )
     const json = await res.json()
-    console.log(json)
     if (json.total_results === 0) {
       ctx.reply('No hits. Sorry!')
     } else {
-      ctx.reply(
-        `${json.results[0].name} \n
-  ${json.results[0].overview}\n`,
-        Extra.markup(
-          Markup.inlineKeyboard([Markup.callbackButton('Subscribe', 'subscribe')])
+      var show = json.results[0]
+      var text = `[\u200B](https://image.tmdb.org/t/p/w640${(show.backdrop_path != null) ? show.backdrop_path : show.poster_path})*${show.name}*\n[TMDb]
+      (https://www.themoviedb.org/tv/${show.id}/) rating: ${show.vote_average}\n \n${show.overview} \n`
+      ctx.replyWithMarkdown(
+        `${text}`, Extra.markup(Markup.inlineKeyboard([Markup.callbackButton('Subscribe', 'subscribe')])
         )
       )
     }
