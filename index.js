@@ -46,9 +46,31 @@ bot.action('subscribe', (ctx, next) => {
 bot.on('message', ctx => showStartMenu(ctx))
 
 // When receiving an inline query from the outside
-bot.on('inline_query', ctx => {
-  const result = []
-  ctx.telegram.answerInlineQuery(ctx.inlineQuery.id, result)
+bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
+  const res = await fetch(
+    `http://api.themoviedb.org/3/search/tv?api_key=${
+      process.env.TMDB_TOKEN
+    }&query=${inlineQuery.query}`,
+    null
+  )
+
+  const { results } = await res.json()
+  const shows = results
+
+  const response = shows.map(show => ({
+    type: 'article',
+    id: show.id,
+    title: show.name,
+    description: show.overview,
+    input_message_content: {
+      message_text: `${show.name} \n \n${show.overview}`
+    }
+  }))
+
+  // console.log(shows)
+  // console.log(response)
+
+  return answerInlineQuery(response)
 })
 
 /**
