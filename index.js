@@ -63,10 +63,10 @@ bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
     url: 'https://www.themoviedb.org/tv/' + String(show.id) + '/',
     title: show.name,
     description: show.overview,
-    thumb_url: 'https://image.tmdb.org/t/p/w640/' + show.poster_path,
+    thumb_url: 'https://image.tmdb.org/t/p/w154' + show.poster_path,
     input_message_content: {
       parse_mode: 'Markdown',
-      message_text: `[\u200B](https://image.tmdb.org/t/p/w640/${(show.backdrop_path != null) ? show.backdrop_path : show.poster_path})*${show.name}*\n[TMDb](https://www.themoviedb.org/tv/${show.id}/) rating: ${show.vote_average}\n \n${show.overview} \n`
+      message_text: `[\u200B](https://image.tmdb.org/t/p/w640${(show.backdrop_path != null) ? show.backdrop_path : show.poster_path})*${show.name}*\n[TMDb](https://www.themoviedb.org/tv/${show.id}/) rating: ${show.vote_average}\n \n${show.overview} \n`
     }
   }))
 
