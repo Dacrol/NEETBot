@@ -8,7 +8,7 @@ const {
   session
 } = require('micro-bot')
 const { enter } = Stage
-const fetch = require('node-fetch')
+const fetch = require('node-fetch').default
 
 const bot = new Composer()
 
@@ -51,6 +51,11 @@ bot.on('inline_query', ctx => {
   ctx.telegram.answerInlineQuery(ctx.inlineQuery.id, result)
 })
 
+/**
+ * Shows a menu on /start
+ *
+ * @param {TelegrafContext} ctx
+ */
 function showStartMenu (ctx) {
   ctx.reply(`Welcome to the real world ${ctx.from.first_name}.\n
 Available commands:\n
@@ -58,11 +63,19 @@ Available commands:\n
 /myshows - Shows all series you are subscribed to.\n`)
 }
 
+/**
+ * Searches info on a show
+ *
+ * @param {SceneContext} ctx
+ * @param {string} name
+ */
 async function seriesSearch (ctx, name) {
   ctx.reply(`Searching for ${name}. Hold on!`)
   ctx.scene.leave()
   const res = await fetch(
-    `http://api.themoviedb.org/3/search/tv?api_key=${process.env.TMDB_TOKEN}&query=${name}`,
+    `http://api.themoviedb.org/3/search/tv?api_key=${
+      process.env.TMDB_TOKEN
+    }&query=${name}`,
     null
   )
   const json = await res.json()
@@ -70,10 +83,12 @@ async function seriesSearch (ctx, name) {
   if (json.total_results === 0) {
     ctx.reply('No hits. Sorry!')
   } else {
-    ctx.reply(`${json.results[0].name} \n
-${json.results[0].overview}\n`, Extra.markup(Markup.inlineKeyboard([
-      Markup.callbackButton('Subscribe', 'subscribe')
-    ])
-    ))
+    ctx.reply(
+      `${json.results[0].name} \n
+${json.results[0].overview}\n`,
+      Extra.markup(
+        Markup.inlineKeyboard([Markup.callbackButton('Subscribe', 'subscribe')])
+      )
+    )
   }
 }
