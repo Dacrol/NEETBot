@@ -1,0 +1,51 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach nodemon",
+      "restart": true,
+      "internalConsoleOptions": "openOnFirstSessionStart",
+      "protocol": "inspector",
+      "port": 9229,
+      "showAsyncStacks": true,
+      "smartStep": true,
+      "localRoot": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**/*"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch nodemon via Yarn",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["devbug"],
+      "port": 9229,
+      "showAsyncStacks": true,
+      "smartStep": true,
+      "protocol": "inspector",
+      "localRoot": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "console": "integratedTerminal",
+      "restart": true,
+      "skipFiles": ["<node_internals>/**/*"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch via NPM",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "debug"],
+      "port": 9229
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach Node",
+      "protocol": "inspector"
+    }
+  ]
+}

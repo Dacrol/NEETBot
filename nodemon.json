@@ -6,7 +6,7 @@
     ],
   "watch": [
     "index.js",
-    "helpers/api-client.js"
+    "helpers/"
   ],
   "verbose": true,
   "ext": "js json",
