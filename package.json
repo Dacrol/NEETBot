@@ -9,7 +9,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --config nodemon.json --exec \"sleep 2 && yarn start\"",
-    "start": "micro-bot -e .env/TOKEN.env index.js",
+    "devbug": "nodemon --config nodemon.json --exec \"sleep 2 && yarn debug\"",
+    "start": "micro-bot -e .env/TOKENS.env index.js",
+    "debug": "node --inspect=9229 node_modules/micro-bot/bin/micro-bot -e .env/TOKENS_DEBUG.env index.js",
     "lint": "eslint .",
     "test": "npm run lint"
   },

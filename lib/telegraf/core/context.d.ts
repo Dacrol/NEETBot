@@ -3,7 +3,7 @@ declare const messageSubTypes: string[];
 declare class TelegrafContext {
     constructor(update: any, telegram: any, options: any);
     readonly me: any;
-    readonly telegram: any;
+    readonly telegram: Telegram;
     readonly message: any;
     readonly editedMessage: any;
     readonly inlineQuery: any;

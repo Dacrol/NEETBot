@@ -5,7 +5,8 @@
      "node_modules/**/node_modules"
     ],
   "watch": [
-    "index.js"
+    "index.js",
+    "helpers/"
   ],
   "verbose": true,
   "ext": "js json",

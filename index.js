@@ -1,41 +1,89 @@
 const {
   Composer,
-  Markup,
   Scene,
-  Extra,
   Stage,
   log,
   session
 } = require('micro-bot')
-const { enter } = Stage
-const fetch = require('node-fetch').default
-
-const bot = new Composer()
-
-// Setup scenes
-const searchScene = new Scene('search')
-searchScene.enter(ctx => ctx.reply('What is the name of the show?'))
-searchScene.on('text', ctx => seriesSearch(ctx, ctx.message.text))
-searchScene.leave()
-
-// Setup stage
-const stage = new Stage([searchScene], {
-  ttl: 15
-})
+// const { enter } = Stage
+const ApiClient = require('./helpers/api-client')
+// const apiClient = new ApiClient()
+const argsRegex = /^\/([^\s]+)\s?([\s\S]*)$/
 
 // Setup bot
-module.exports = bot
+const bot = new Composer()
 // Echo requests to console
 bot.use(log())
 bot.use(session())
+
+// Setup scenes
+const showSearchScene = new Scene('search')
+showSearchScene.enter(ctx => ctx.reply('What is the name of the show?'))
+showSearchScene.command((ctx, next) => {
+  ctx.scene.leave()
+  next(ctx)
+})
+showSearchScene.on('text', (ctx, next) => {
+  if (ctx.scene.current) {
+    ApiClient.seriesSearch(ctx, ctx.message.text)
+    ctx.scene.leave()
+  } else {
+    next(ctx)
+  }
+})
+// showSearchScene.leave()
+
+// Setup stage
+const stage = new Stage([showSearchScene], {
+  ttl: 30
+})
 bot.use(stage.middleware())
 
-// Commands
+// Force all commands to be lowercase
+bot.command = function (commands, ...fns) {
+  commands = Array.isArray(commands)
+    ? commands.map((command) => command.toLowerCase())
+    : commands.toLowerCase()
+  return this.use(Composer.command(commands, ...fns))
+}
+
+// Force all incoming commands to be lowercase also
+bot.use(Composer.entity('bot_command',
+  (ctx, next) => {
+    const entity = ctx.message.entities.find(entity => entity.offset === 0 && entity.type === 'bot_command')
+    console.log(entity)
+    const command = ctx.message.text.substring(entity.offset, entity.offset + entity.length)
+
+    ctx.message.text = ctx.message.text.split(command).join(command.toLowerCase())
+
+    return next(ctx)
+  }))
+
+// For testing
+bot.command('Echo',
+  /**
+   * @param { TelegrafContext } ctx
+   */
+  ctx => {
+    const echo = argsRegex.exec(ctx.message.text)[2]
+    if (echo) {
+      ctx.reply(echo)
+    }
+  })
+
+// Bot commands
 bot.command('start', ctx => showStartMenu(ctx))
 bot.command('myshows', ({ reply }) => {
   return reply('You are not subscribed to any shows yet.')
 })
-bot.command('search', enter('search'))
+bot.command('search', (ctx) => {
+  const searchTerm = argsRegex.exec(ctx.message.text)[2]
+  if (/\S/.test(searchTerm)) {
+    ApiClient.seriesSearch(ctx, searchTerm.trim())
+  } else {
+    ctx.scene.enter('search')
+  }
+})
 
 // Actions aka keyboard callbacks
 bot.action('subscribe', (ctx, next) => {
@@ -47,34 +95,13 @@ bot.on('message', ctx => showStartMenu(ctx))
 
 // When receiving an inline query from the outside
 bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
-  const res = await fetch(
-    `http://api.themoviedb.org/3/search/tv?api_key=${
-      process.env.TMDB_TOKEN
-    }&query=${inlineQuery.query}`,
-    null
-  )
-
-  const { results } = await res.json()
-  const shows = results
-
-  const response = shows.map(show => ({
-    type: 'article',
-    id: show.id,
-    url: 'https://www.themoviedb.org/tv/' + String(show.id) + '/',
-    title: show.name,
-    description: show.overview,
-    thumb_url: 'https://image.tmdb.org/t/p/w154' + show.poster_path,
-    input_message_content: {
-      parse_mode: 'Markdown',
-      message_text: `[\u200B](https://image.tmdb.org/t/p/w640${(show.backdrop_path != null) ? show.backdrop_path : show.poster_path})*${show.name}*\n[TMDb](https://www.themoviedb.org/tv/${show.id}/) rating: ${show.vote_average}\n \n${show.overview} \n`
-    }
-  }))
-
   // console.log(shows)
   // console.log(response)
-
-  return answerInlineQuery(response)
+  var iqResult = await ApiClient.seriesSearchInline(inlineQuery.query)
+  return answerInlineQuery(iqResult)
 })
+
+module.exports = bot
 
 /**
  * Shows a menu on /start
@@ -86,34 +113,4 @@ function showStartMenu (ctx) {
 Available commands:\n
 /search - Search for a show.
 /myshows - Shows all series you are subscribed to.\n`)
-}
-
-/**
- * Searches info on a show
- *
- * @param {SceneContext} ctx
- * @param {string} name
- */
-async function seriesSearch (ctx, name) {
-  ctx.reply(`Searching for ${name}. Hold on!`)
-  ctx.scene.leave()
-  const res = await fetch(
-    `http://api.themoviedb.org/3/search/tv?api_key=${
-      process.env.TMDB_TOKEN
-    }&query=${name}`,
-    null
-  )
-  const json = await res.json()
-  console.log(json)
-  if (json.total_results === 0) {
-    ctx.reply('No hits. Sorry!')
-  } else {
-    ctx.reply(
-      `${json.results[0].name} \n
-${json.results[0].overview}\n`,
-      Extra.markup(
-        Markup.inlineKeyboard([Markup.callbackButton('Subscribe', 'subscribe')])
-      )
-    )
-  }
 }

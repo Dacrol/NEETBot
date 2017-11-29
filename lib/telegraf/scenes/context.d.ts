@@ -5,12 +5,11 @@ declare const noop: () => any;
 declare const now: () => number;
 
 declare class SceneContext extends TelegrafContext{
-    scene: scene.SceneContext;
-    test: Test
+    scene: SceneContext.Scene;
 }
 
-declare namespace scene {
-  export class SceneContext {
+declare namespace SceneContext {
+  export class Scene {
     constructor(ctx: any, scenes: any, options: any);
     readonly session: any;
     state: any;
