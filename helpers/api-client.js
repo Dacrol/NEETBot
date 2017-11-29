@@ -10,7 +10,7 @@ class ApiClient {
  *
  * @param {string} query
  */
-  async seriesSearchInline (query) {
+  static async seriesSearchInline (query) {
     const res = await fetch(
       `http://api.themoviedb.org/3/search/tv?api_key=${
         process.env.TMDB_TOKEN
@@ -41,7 +41,7 @@ class ApiClient {
  * @param {SceneContext} ctx
  * @param {string} query
  */
-  async seriesSearch (ctx, query) {
+  static async seriesSearch (ctx, query) {
     const res = await fetch(
       `http://api.themoviedb.org/3/search/tv?api_key=${
         process.env.TMDB_TOKEN
