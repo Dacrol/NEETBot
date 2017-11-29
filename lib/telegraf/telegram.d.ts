@@ -64,5 +64,5 @@ declare class Telegram extends ApiClient {
     addStickerToSet(ownerId: any, name: any, stickerData: any, isMasks: any): any;
     setStickerPositionInSet(sticker: any, position: any): any;
     deleteStickerFromSet(sticker: any): any;
-    sendCopy(chatId: any, message: any, extra: any): any;
+    sendCopy(chatId: any, message: any, extra?: any): any;
 }
