@@ -87,6 +87,7 @@ bot.command('search', (ctx) => {
 
 // Actions aka keyboard callbacks
 bot.action('subscribe', (ctx, next) => {
+  ctx.editMessageReplyMarkup({})
   return ctx.reply('Subscribed 👍')
 })
 
