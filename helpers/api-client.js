@@ -79,8 +79,13 @@ class ApiClient {
     if (json.total_results === 0) {
       ctx.reply('No hits. Sorry!')
     } else {
-      var show = json.results[0]
-      var id = show.id
+      try {
+        var show = json.results[0]
+        var id = show.id
+      } catch (TypeError) {
+        ctx.reply('No match, sorry!')
+        return
+      }
       res = await fetch(
         `http://api.themoviedb.org/3/tv/${id}?api_key=${
           process.env.TMDB_TOKEN
@@ -90,29 +95,30 @@ class ApiClient {
       // https://api.themoviedb.org/3/tv/73833?api_key=
       json = await res.json()
       try {
-        console.log(json)
+        // console.log(json)
         var season = json.number_of_seasons
+        res = await fetch(
+          `http://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${
+            process.env.TMDB_TOKEN
+          }`,
+          null
+        )
       } catch (TypeError) {
+        ctx.reply('No match, sorry!')
         return
       }
-      res = await fetch(
-        `http://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${
-          process.env.TMDB_TOKEN
-        }`,
-        null
-      )
       // https://api.themoviedb.org/3/tv/73833/season/1
       json = await res.json()
       console.log(json)
-      var data = Object.entries(json)
-      var dates = data[2][1].map((ep) => {
+      const data = Object.entries(json)
+      const dates = data[2][1].map((ep) => {
         return [ep.episode_number, ep.air_date]
       })
       const nextep = dates.find((ep) => {
         return moment(ep[1]).isAfter()
       })
       try {
-        ctx.reply('The next episode is episode ' + nextep[0] + ', and it airs on ' + nextep[1])
+        ctx.reply(`The next episode of ${show.name} is episode ${nextep[0]}, it airs on ${nextep[1]}`)
       } catch (TypeError) {
         ctx.reply('No match, sorry!')
       }
