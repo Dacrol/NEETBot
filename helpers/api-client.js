@@ -95,7 +95,6 @@ class ApiClient {
       // https://api.themoviedb.org/3/tv/73833?api_key=
       json = await res.json()
       try {
-        // console.log(json)
         var season = json.number_of_seasons
         res = await fetch(
           `http://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${
@@ -104,23 +103,22 @@ class ApiClient {
           null
         )
       } catch (TypeError) {
-        ctx.reply('No match, sorry!')
+        ctx.reply('No match, sorry! (Could not find seasons)')
         return
       }
       // https://api.themoviedb.org/3/tv/73833/season/1
       json = await res.json()
-      console.log(json)
-      const data = Object.entries(json)
-      const dates = data[2][1].map((ep) => {
-        return [ep.episode_number, ep.air_date]
-      })
-      const nextep = dates.find((ep) => {
-        return moment(ep[1]).isAfter()
-      })
       try {
-        ctx.reply(`The next episode of ${show.name} is episode ${nextep[0]}, it airs on ${nextep[1]}`)
+        var data = Object.entries(json)
+        var dates = data[2][1].map((ep) => {
+          return [ep.episode_number, ep.air_date]
+        })
+        var nextep = dates.find((ep) => {
+          return moment(ep[1]).isAfter()
+        })
+        ctx.reply(`The next episode of ${show.name} is episode ${nextep[0]}, which airs on ${nextep[1]}.`)
       } catch (TypeError) {
-        ctx.reply('No match, sorry!')
+        ctx.reply('No match, sorry! (Could not find any future episodes)')
       }
     }
   }
