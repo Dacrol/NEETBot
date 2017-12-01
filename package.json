@@ -25,6 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "micro-bot": "^2.0.0",
+    "moment": "^2.19.3",
     "node-fetch": "^1.7.3"
   },
   "devDependencies": {
