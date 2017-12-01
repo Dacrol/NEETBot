@@ -85,6 +85,15 @@ bot.command('search', (ctx) => {
   }
 })
 
+bot.command('nextep', (ctx) => {
+  const searchTerm = argsRegex.exec(ctx.message.text)[2]
+  if (/\S/.test(searchTerm)) {
+    ApiClient.nextEpSearch(ctx, searchTerm.trim())
+  } else {
+    // ctx.scene.enter('search')
+  }
+})
+
 // Actions aka keyboard callbacks
 bot.action('subscribe', (ctx, next) => {
   ctx.editMessageReplyMarkup({})

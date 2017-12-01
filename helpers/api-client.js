@@ -3,6 +3,7 @@ const {
   Extra
 } = require('micro-bot')
 const fetch = require('node-fetch').default
+const moment = require('moment')
 
 class ApiClient {
   /**
@@ -58,6 +59,69 @@ class ApiClient {
         `${text}`, Extra.markup(Markup.inlineKeyboard([Markup.callbackButton('Subscribe', 'subscribe')])
         )
       )
+    }
+  }
+
+  /**
+ * Searches info on a show
+ *
+ * @param {SceneContext} ctx
+ * @param {string} query
+ */
+  static async nextEpSearch (ctx, query) {
+    var res = await fetch(
+      `http://api.themoviedb.org/3/search/tv?api_key=${
+        process.env.TMDB_TOKEN
+      }&query=${query}`,
+      null
+    )
+    var json = await res.json()
+    if (json.total_results === 0) {
+      ctx.reply('No hits. Sorry!')
+    } else {
+      try {
+        var show = json.results[0]
+        var id = show.id
+      } catch (TypeError) {
+        ctx.reply('No match, sorry!')
+        return
+      }
+      res = await fetch(
+        `http://api.themoviedb.org/3/tv/${id}?api_key=${
+          process.env.TMDB_TOKEN
+        }`,
+        null
+      )
+      // https://api.themoviedb.org/3/tv/73833?api_key=
+      json = await res.json()
+      try {
+        // console.log(json)
+        var season = json.number_of_seasons
+        res = await fetch(
+          `http://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${
+            process.env.TMDB_TOKEN
+          }`,
+          null
+        )
+      } catch (TypeError) {
+        ctx.reply('No match, sorry!')
+        return
+      }
+      // https://api.themoviedb.org/3/tv/73833/season/1
+      json = await res.json()
+      console.log(json)
+      const data = Object.entries(json)
+      const dates = data[2][1].map((ep) => {
+        return [ep.episode_number, ep.air_date]
+      })
+      const nextep = dates.find((ep) => {
+        return moment(ep[1]).isAfter()
+      })
+      try {
+        ctx.reply(`The next episode of ${show.name} is episode ${nextep[0]}, it airs on ${nextep[1]}`)
+      } catch (TypeError) {
+        ctx.reply('No match, sorry!')
+      }
     }
   }
 }
