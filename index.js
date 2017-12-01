@@ -119,8 +119,12 @@ module.exports = bot
  * @param {TelegrafContext} ctx
  */
 function showStartMenu (ctx) {
-  ctx.reply(`Welcome to the real world ${ctx.from.first_name}.\n
+  ctx.replyWithMarkdown(`*“*_The sky above the port was the color of television, tuned to a dead channel._ *”*
+          — William Gibson, Neuromancer\n
 Available commands:\n
-/search - Search for a show.
-/myshows - Shows all series you are subscribed to.\n`)
+/search - Search for information on a show.
+/nextep - Find when the next episode of a show is airing.
+(Coming soon) /subscribe - Receive alerts when new episodes air.
+(Coming soon) /myshows - Shows all series you are subscribed to.
+Use @NEETShowBot in any chat to search for show information inline!\n`)
 }

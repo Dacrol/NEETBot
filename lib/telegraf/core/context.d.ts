@@ -66,7 +66,7 @@ declare class TelegrafContext {
     uploadStickerFile(...args: any[]): any;
     createNewStickerSet(...args: any[]): any;
     addStickerToSet(...args: any[]): any;
-    replyWithMarkdown(markdown: any, extra: any): any;
+    replyWithMarkdown(markdown: any, extra?: any): any;
     replyWithHTML(html: any, extra: any): any;
     deleteMessage(): any;
 }
