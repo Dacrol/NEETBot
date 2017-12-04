@@ -51,7 +51,6 @@ bot.command = function (commands, ...fns) {
 bot.use(Composer.entity('bot_command',
   (ctx, next) => {
     const entity = ctx.message.entities.find(entity => entity.offset === 0 && entity.type === 'bot_command')
-    console.log(entity)
     const command = ctx.message.text.substring(entity.offset, entity.offset + entity.length)
 
     ctx.message.text = ctx.message.text.split(command).join(command.toLowerCase())
@@ -85,7 +84,7 @@ bot.command('search', (ctx) => {
   }
 })
 
-bot.command('nextep', (ctx) => {
+bot.command('nextep', async (ctx) => {
   const searchTerm = argsRegex.exec(ctx.message.text)[2]
   if (/\S/.test(searchTerm)) {
     ApiClient.nextEpSearch(ctx, searchTerm.trim())
@@ -105,8 +104,6 @@ bot.on('message', ctx => showStartMenu(ctx))
 
 // When receiving an inline query from the outside
 bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
-  // console.log(shows)
-  // console.log(response)
   var iqResult = await ApiClient.seriesSearchInline(inlineQuery.query)
   return answerInlineQuery(iqResult)
 })
