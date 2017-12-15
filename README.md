@@ -1,6 +1,8 @@
 # NEETBot
 
-NEETBot keeps track of and notifies you when new episodes of TV-shows you&#39;re following are released.
+NEETBot keeps track of and notifies you when new episodes of TV-shows you&#39;re following are released.  
+
+Message [@NEETShowBot](https://t.me/NEETShowBot) on Telegram to use.  
 
 <!-- 
 Scaffolded README (with https://github.com/telegraf/create-bot): 
