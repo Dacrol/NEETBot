@@ -15,14 +15,19 @@
       "showAsyncStacks": true,
       "smartStep": true,
       "localRoot": "${workspaceFolder}",
-      "skipFiles": ["<node_internals>/**/*"]
+      "skipFiles": [
+        "<node_internals>/**/*",
+        "./node_modules/**/*"
+      ]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Launch nodemon via Yarn",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["devbug"],
+      "runtimeArgs": [
+        "devbug"
+      ],
       "port": 9229,
       "showAsyncStacks": true,
       "smartStep": true,
@@ -31,14 +36,19 @@
       "internalConsoleOptions": "openOnSessionStart",
       "console": "integratedTerminal",
       "restart": true,
-      "skipFiles": ["<node_internals>/**/*"]
+      "skipFiles": [
+        "<node_internals>/**/*"
+      ]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Launch via NPM",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "debug"],
+      "runtimeArgs": [
+        "run",
+        "debug"
+      ],
       "port": 9229
     },
     {

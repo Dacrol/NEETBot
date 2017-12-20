@@ -153,10 +153,11 @@ async function nextEpisodeFromTVMaze (externalProvider, externalID) {
     { redirect: 'manual' }
   ).then(res => {
     return fetch(
+      // Need some check here to see if the url actually exists
       res.headers.get('location') +
         '?embed[]=nextepisode&embed[]=previousepisode'
     ).then(res => res.json())
-  })
+  }).catch(() => null)
   return Object.assign({}, showDetails)
 }
 
