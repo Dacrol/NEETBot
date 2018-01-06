@@ -7,11 +7,13 @@ const {
 } = require('micro-bot')
 // const { enter } = Stage
 const ApiClient = require('./helpers/api-client')
+const TeleAnyCase = require('./helpers/anycase')
+
 // const apiClient = new ApiClient()
 const argsRegex = /^\/([^\s]+)\s?([\s\S]*)$/
 
 // Setup bot
-const bot = new Composer()
+const bot = TeleAnyCase.apply(new Composer())
 // Echo requests to console
 bot.use(log())
 bot.use(session())
@@ -39,27 +41,8 @@ const stage = new Stage([showSearchScene], {
 })
 bot.use(stage.middleware())
 
-// Force all commands to be lowercase
-bot.command = function (commands, ...fns) {
-  commands = Array.isArray(commands)
-    ? commands.map((command) => command.toLowerCase())
-    : commands.toLowerCase()
-  return this.use(Composer.command(commands, ...fns))
-}
-
-// Force all incoming commands to be lowercase also
-bot.use(Composer.entity('bot_command',
-  (ctx, next) => {
-    const entity = ctx.message.entities.find(entity => entity.offset === 0 && entity.type === 'bot_command')
-    const command = ctx.message.text.substring(entity.offset, entity.offset + entity.length)
-
-    ctx.message.text = ctx.message.text.split(command).join(command.toLowerCase())
-
-    return next(ctx)
-  }))
-
 // For testing
-bot.command('Echo',
+bot.command('EchO',
   /**
    * @param { TelegrafContext } ctx
    */

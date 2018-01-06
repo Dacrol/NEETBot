@@ -38,3 +38,5 @@ coverage
 # Environment variable files
 \.env/
 *.env
+
+NEETBot\.code-workspace
