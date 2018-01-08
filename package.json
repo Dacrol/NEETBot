@@ -13,7 +13,7 @@
     "start": "micro-bot -e .env/TOKENS.env index.js",
     "debug": "node --inspect=9229 node_modules/micro-bot/bin/micro-bot -e .env/TOKENS_DEBUG.env index.js",
     "lint": "eslint .",
-    "test": "npm run lint"
+    "test": "ava tests"
   },
   "engines": {
     "node": ">=8.5.0"
