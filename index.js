@@ -9,11 +9,11 @@ const {
 const ApiClient = require('./helpers/api-client')
 const TeleAnyCase = require('./helpers/anycase')
 
-// const apiClient = new ApiClient()
 const argsRegex = /^\/([^\s]+)\s?([\s\S]*)$/
 
 // Setup bot
 const bot = TeleAnyCase.apply(new Composer())
+
 // Echo requests to console
 bot.use(log())
 bot.use(session())
@@ -33,7 +33,15 @@ showSearchScene.on('text', (ctx, next) => {
     next(ctx)
   }
 })
-// showSearchScene.leave()
+
+bot.command('search', (ctx) => {
+  const searchTerm = argsRegex.exec(ctx.message.text)[2]
+  if (/\S/.test(searchTerm)) {
+    ApiClient.seriesSearch(ctx, searchTerm.trim())
+  } else {
+    ctx.scene.enter('search')
+  }
+})
 
 // Setup stage
 const stage = new Stage([showSearchScene], {
@@ -58,19 +66,21 @@ bot.command('start', ctx => showStartMenu(ctx))
 bot.command('myshows', ({ reply }) => {
   return reply('You are not subscribed to any shows yet.')
 })
-bot.command('search', (ctx) => {
-  const searchTerm = argsRegex.exec(ctx.message.text)[2]
-  if (/\S/.test(searchTerm)) {
-    ApiClient.seriesSearch(ctx, searchTerm.trim())
-  } else {
-    ctx.scene.enter('search')
-  }
-})
+
 
 bot.command('nextep', async (ctx) => {
   const searchTerm = argsRegex.exec(ctx.message.text)[2]
   if (/\S/.test(searchTerm)) {
     ApiClient.nextEpSearch(ctx, searchTerm.trim())
+  } else {
+    // ctx.scene.enter('search')
+  }
+})
+
+bot.command('lastep', async (ctx) => {
+  const searchTerm = argsRegex.exec(ctx.message.text)[2]
+  if (/\S/.test(searchTerm)) {
+    ApiClient.lastEpSearch(ctx, searchTerm.trim())
   } else {
     // ctx.scene.enter('search')
   }
@@ -104,6 +114,7 @@ function showStartMenu (ctx) {
 Available commands:\n
 /search - Search for information on a show.
 /nextep - Find when the next episode of a show is airing.
+/lastep - Find when the last aired episode of a show aired.
 (Coming soon) /subscribe - Receive alerts when new episodes air.
 (Coming soon) /myshows - Shows all series you are subscribed to.
 Use @NEETShowBot in any chat to search for show information inline!\n`)

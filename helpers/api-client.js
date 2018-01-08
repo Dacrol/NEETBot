@@ -4,11 +4,15 @@ const moment = require('moment')
 require('moment-duration-format')
 
 class ApiClient {
-  /**
-   * Searches for info on a show inline.
-   *
-   * @param {string} query
-   */
+
+/**
+ *
+ *
+ * @static
+ * @param {string} query
+ * @returns {Promise<string>} response
+ * @memberof ApiClient
+ */
   static async seriesSearchInline (query) {
     const res = await fetch(
       `http://api.themoviedb.org/3/search/tv?api_key=${
@@ -88,7 +92,7 @@ class ApiClient {
       return
     }
     if (show.external_ids.tvdb_id > 0) {
-      var episodeData = await nextEpisodeFromTVMaze(
+      var episodeData = await episodeDataFromTVMaze(
         'thetvdb',
         show.external_ids.tvdb_id
       )
@@ -111,6 +115,47 @@ class ApiClient {
       })(episodeData)
     } else {
       ctx.reply('No match, sorry! (Could not find any future episodes)')
+    }
+  }
+
+  /**
+   * Find the last episode of a show
+   *
+   * @static
+   * @param {TelegrafContext} ctx a TelegrafContext to reply to
+   * @param {string} query Name of the show
+   * @memberof ApiClient
+   */
+  static async lastEpSearch (ctx, query) {
+    const show = await getShowDetails(query)
+    if (typeof show === 'string') {
+      ctx.reply(show)
+      return
+    }
+    if (show.external_ids.tvdb_id > 0) {
+      var episodeData = await episodeDataFromTVMaze(
+        'thetvdb',
+        show.external_ids.tvdb_id
+      )
+    }
+    if (
+      episodeData &&
+      episodeData._embedded &&
+      episodeData._embedded.previousepisode
+    ) {
+      (show => {
+        let lastEp = show._embedded.previousepisode
+        let time = moment(lastEp.airstamp)
+        ctx.reply(
+          `The last episode of ${show.name} was episode number ${
+            lastEp.number
+          },${(lastEp.name.length < 1 || lastEp.name.startsWith('Episode')) ? '' : ' "' + lastEp.name + '",'} which aired on ${time
+            .utcOffset(1)
+            .format('dddd, MMMM Do, h:mm a')} (${moment.duration(moment().diff(time)).format('d [days], h [hours], m [minutes]')} ago).`
+        )
+      })(episodeData)
+    } else {
+      ctx.reply('No match, sorry! (Could not find any previous episodes)')
     }
   }
 }
@@ -148,7 +193,14 @@ async function getShowDetails (query, tmdbToken = null) {
   }
 }
 
-async function nextEpisodeFromTVMaze (externalProvider, externalID) {
+/**
+ *
+ *
+ * @param {string} externalProvider
+ * @param {number|string} externalID
+ * @returns {Promise<Object>}
+ */
+async function episodeDataFromTVMaze (externalProvider, externalID) {
   const showDetails = await fetch(
     'http://api.tvmaze.com/lookup/shows?' + externalProvider + '=' + externalID,
     { redirect: 'manual' }
