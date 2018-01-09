@@ -68,7 +68,7 @@ bot.command('myshows', ({ reply }) => {
 })
 
 
-bot.command('nextep', async (ctx) => {
+bot.command(['nextep', 'nextepisode'], async (ctx) => {
   const searchTerm = argsRegex.exec(ctx.message.text)[2]
   if (/\S/.test(searchTerm)) {
     ApiClient.nextEpSearch(ctx, searchTerm.trim())
@@ -77,7 +77,7 @@ bot.command('nextep', async (ctx) => {
   }
 })
 
-bot.command('lastep', async (ctx) => {
+bot.command(['lastep', 'lastepisode', 'prevep', 'previousep', 'previousepisode'], async (ctx) => {
   const searchTerm = argsRegex.exec(ctx.message.text)[2]
   if (/\S/.test(searchTerm)) {
     ApiClient.lastEpSearch(ctx, searchTerm.trim())
