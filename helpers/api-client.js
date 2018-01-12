@@ -51,7 +51,7 @@ class ApiClient {
    */
   static async seriesSearch (ctx, query) {
     const res = await fetch(
-      `http://api.themoviedb.org/3/search/tv?api_key=${
+      `http://api.themoviedb.org/3/search/multi?api_key=${
         process.env.TMDB_TOKEN
       }&query=${query}`,
       null
@@ -60,10 +60,15 @@ class ApiClient {
     if (json.total_results === 0) {
       ctx.reply('No hits. Sorry!')
     } else {
-      var show = json.results[0]
-      var text = `[\u200B](https://image.tmdb.org/t/p/w640${
+      let show = json.results[0]
+      const type = show.media_type
+      if (!type) {
+        ctx.reply('No hits, sorry!')
+        return
+      }
+      let text = `[\u200B](https://image.tmdb.org/t/p/w640${
         show.backdrop_path != null ? show.backdrop_path : show.poster_path
-      })*${show.name}*\n[TMDb](https://www.themoviedb.org/tv/${
+      })*${show.name || show.title}*\n[TMDb](https://www.themoviedb.org/${type}/${
         show.id
       }/) rating: ${show.vote_average}\n \n${show.overview} \n`
       ctx.replyWithMarkdown(
