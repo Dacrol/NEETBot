@@ -2,7 +2,7 @@ import test from 'ava'
 const Telegraf = require('telegraf')
 
 const TeleAnyCase = require('../helpers/anycase')
-const NEETBot = require('../index')
+// const NEETBot = require('../index')
 
 const message = {
   chat: { id: 4 },
