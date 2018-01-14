@@ -13,7 +13,8 @@
     "start": "micro-bot -e .env/TOKENS.env index.js",
     "debug": "node --inspect=9229 node_modules/micro-bot/bin/micro-bot -e .env/TOKENS_DEBUG.env index.js",
     "lint": "eslint .",
-    "test": "ava tests"
+    "test": "ava tests",
+    "prepush": "npm run lint && npm run test"
   },
   "engines": {
     "node": ">=8.5.0"
@@ -39,6 +40,7 @@
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
+    "husky": "^0.14.3",
     "nodemon": "^1.14.9"
   }
 }
