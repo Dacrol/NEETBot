@@ -126,7 +126,7 @@ bot.on('message', ctx => showStartMenu(ctx))
 
 // When receiving an inline query from the outside
 bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
-  var iqResult = await ApiClient.seriesSearchInline(inlineQuery.query)
+  var iqResult = await ApiClient.searchInline(inlineQuery.query)
   return answerInlineQuery(iqResult)
 })
 
