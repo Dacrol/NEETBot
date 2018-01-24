@@ -19,6 +19,8 @@ bot.use(log())
 bot.use(session())
 
 // Setup scenes
+
+// Normal search scene
 const showSearchScene = new Scene('search')
 showSearchScene.enter(ctx => ctx.reply('What is the name of the show?'))
 showSearchScene.command((ctx, next) => {
@@ -34,6 +36,39 @@ showSearchScene.on('text', (ctx, next) => {
   }
 })
 
+// Next episode scene
+const nextEpSearchScene = new Scene('nextEpSearch')
+nextEpSearchScene.enter(ctx => ctx.reply('What show?'))
+
+nextEpSearchScene.on('text', (ctx, next) => {
+  if (ctx.scene.current) {
+    ApiClient.nextEpSearch(ctx, ctx.message.text)
+    ctx.scene.leave()
+  } else {
+    next(ctx)
+  }
+})
+
+// Last episode scene
+const lastEpSearchScene = new Scene('lastEpSearch')
+lastEpSearchScene.enter(ctx => ctx.reply('What show?'))
+
+lastEpSearchScene.on('text', (ctx, next) => {
+  if (ctx.scene.current) {
+    ApiClient.lastEpSearch(ctx, ctx.message.text)
+    ctx.scene.leave()
+  } else {
+    next(ctx)
+  }
+})
+
+
+// Setup stage
+const stage = new Stage([showSearchScene, nextEpSearchScene, lastEpSearchScene], {
+  ttl: 30
+})
+bot.use(stage.middleware())
+
 bot.command('search', (ctx) => {
   const searchTerm = argsRegex.exec(ctx.message.text)[2]
   if (/\S/.test(searchTerm)) {
@@ -42,12 +77,6 @@ bot.command('search', (ctx) => {
     ctx.scene.enter('search')
   }
 })
-
-// Setup stage
-const stage = new Stage([showSearchScene], {
-  ttl: 30
-})
-bot.use(stage.middleware())
 
 // For testing
 bot.command('EchO',
@@ -68,21 +97,21 @@ bot.command('myshows', ({ reply }) => {
 })
 
 
-bot.command('nextep', async (ctx) => {
+bot.command(['nextep', 'nextepisode'], async (ctx) => {
   const searchTerm = argsRegex.exec(ctx.message.text)[2]
   if (/\S/.test(searchTerm)) {
     ApiClient.nextEpSearch(ctx, searchTerm.trim())
   } else {
-    // ctx.scene.enter('search')
+    ctx.scene.enter('nextEpSearch')
   }
 })
 
-bot.command('lastep', async (ctx) => {
+bot.command(['lastep', 'lastepisode', 'prevep', 'previousep', 'previousepisode'], async (ctx) => {
   const searchTerm = argsRegex.exec(ctx.message.text)[2]
   if (/\S/.test(searchTerm)) {
     ApiClient.lastEpSearch(ctx, searchTerm.trim())
   } else {
-    // ctx.scene.enter('search')
+    ctx.scene.enter('lastEpSearch')
   }
 })
 
@@ -97,7 +126,7 @@ bot.on('message', ctx => showStartMenu(ctx))
 
 // When receiving an inline query from the outside
 bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
-  var iqResult = await ApiClient.seriesSearchInline(inlineQuery.query)
+  var iqResult = await ApiClient.searchInline(inlineQuery.query)
   return answerInlineQuery(iqResult)
 })
 
